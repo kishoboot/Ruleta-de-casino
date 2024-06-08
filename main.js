@@ -16,7 +16,7 @@ let select1_12 = 0;
 let select1_18 = 0;
 let select13_24 = 0;
 let select19_36 = 0;
-let select25_36 = 0;
+let select25_36 = 0; 
 let currentlyBet = 0;
 let run = false;
 
@@ -30,34 +30,39 @@ const openInfo = () => info.style.display = "block"; // muestra la ventana emerg
 
 const closeInfo = () => info.style.display = "none"; // oculta la ventana emergente estableciendo el estilo de visualización en “none”.
 
-const selectToken = (token) => {
-	for(let i=0; i<tokens.length; i++){
-		tokens[i].style.transform  = "scale(1)";
-		tokens[i].style.fontSize = "0.6em";
-		tokens[i].style.boxShadow  = "0 0 10px transparent";
-	}
-	token.style.transform  = "scale(1.2)";
-	token.style.fontSize = "0.7em";
-	token.style.boxShadow  = "0 0 10px black";
-};
+const selectToken = (token) => {  // Función que se encarga de resaltar un token seleccionado
 
+	// // Itero sobre todos los tokens y les aplico estilos CSS para resetearlos
+	for(let i=0; i<tokens.length; i++){
+		tokens[i].style.transform  = "scale(1)"; // Resetear escala
+		tokens[i].style.fontSize = "0.6em"; // Resetear tamaño de fuente
+		tokens[i].style.boxShadow  = "0 0 10px transparent"; // Resetear sombra
+	}
+	//  // Ahora aplico estilos CSS específicos al token seleccionado
+	token.style.transform  = "scale(1.2)";  // AU 20%
+	token.style.fontSize = "0.7em";  
+	token.style.boxShadow  = "0 0 10px black"; 
+};
+// Función que se encarga de inicializar la aplicación
 const init = () => {
 	boxes = document.getElementsByClassName('box');
 	nbrs = document.getElementsByClassName('nbr');
 	tokens = document.getElementsByClassName('choicetoken');
 	
+	 // Itero sobre los elementos 'box' y...
 	for(let a=0; a<boxes.length; a++){
 		valueBoxes.push(document.getElementsByClassName('box')[a].innerText); 
-		boxes[a].setAttribute("bet", 0);
+		boxes[a].setAttribute("bet", 0);  // Establezco un atributo 'bet' con valor 0 en cada elemento
 	}
 	
+	// Itero sobre los elementos 'nbr' y agrego un evento de clic a cada elemento
 	for(let b=0; b<nbrs.length; b++){
 		nbrs[b].addEventListener("click", function(){
 			token(nbrs[b]);
 		});
 	}
 	
-	
+	// Cuando se hace clic en un elemento 'nbr', llamo a la función token con el elemento como parámetro
 	for(let c=0; c<tokens.length; c++){
 		tokens[c].addEventListener("click", function(){
 			selectToken(tokens[c])
@@ -89,16 +94,17 @@ const init = () => {
 	const roulette = new Roulette("canvas-container", numbers, colors, onSpinEnd);
 	
 	const spinBtn = document.getElementById("play");
-		  spinBtn.onclick = roulette.spin;
+		  spinBtn.onclick = roulette.spin; 
 };
-
+// Función que establece el valor de la apuesta según la opción seleccionada
 const choiceToken = (val) => choiceBet = val == "all" ? account : val;
 
+// Función que se encarga de manejar la lógica de apuestas en una caja específica
 const token = (box) => {
 	if(!run){
 		if(account>=choiceBet||choiceBet<0){
 			let bet = parseInt(box.getAttribute("bet"));
-			if(bet+choiceBet>=0){
+			if(bet+choiceBet>=0){ // Verifico si la cuenta tiene suficiente saldo para realizar la apuesta
 				bet+=choiceBet;
 				box.setAttribute("bet", bet);
 				
@@ -114,7 +120,7 @@ const token = (box) => {
 						box.removeChild(box.lastChild);
 					}
 				}
-				
+				 // Actualizo el saldo disponible y la apuesta actual
 				account-=choiceBet;
 				currentlyBet+=choiceBet;
 				accountUpDate();
@@ -124,8 +130,8 @@ const token = (box) => {
 				while (box.childNodes.length>1) {
 						box.removeChild(box.lastChild);
 				}
-				box.setAttribute("bet", 0);
-				account+=bet;
+				box.setAttribute("bet", 0);  // Restablezco el valor de la apuesta en la caja a 0
+				account+=bet;// Devuelvo el saldo disponible y la apuesta actual a sus valores originales
 				currentlyBet-=bet;
 				accountUpDate();
 				betUpDate(); 
@@ -148,26 +154,26 @@ const token = (box) => {
 		}
 	}
 };
-
+// Función que maneja la apuesta en la opción "par o impar"
 const evenOdd = (box, x) => {
 	if(x==0)even+=choiceBet;
 	if(x==1)odd+=choiceBet;
 	token(box);
 };
-
+// Función que maneja la apuesta en la opción "rojo o negro"
 const redBlack = (box, x) => {
 	if(x=="red")red+=choiceBet;
 	if(x=="black")black+=choiceBet;
 	token(box);
 };
-
+// Función que maneja la apuesta en la opción "filas"
 const rows = (box, x) => {
 	if(x==1)row1+=choiceBet;
 	if(x==2)row2+=choiceBet;
 	if(x==3)row3+=choiceBet;
 	token(box);
 };
-
+// Función que maneja la apuesta en la opción "selección de números"
 const select = (box, min, max) => {
 	if(min==1&&max==12)select1_12+=choiceBet;
 	if(min==1&&max==18)select1_18+=choiceBet;
@@ -176,7 +182,7 @@ const select = (box, min, max) => {
 	if(min==25&&max==36)select25_36+=choiceBet;
 	token(box);
 };
-
+// Función que se llama cuando el spin del ruleta termina
 const start = (result) => {
 	out = result
 	check();
@@ -191,7 +197,7 @@ const start = (result) => {
 	}, 3000);
 	
 };
-
+// Función que verifica si hay ganadores en el spin del ruleta
 const check = () => {
 	for(let i=0; i<nbrs.length; i++){
 		let bet = parseInt(nbrs[i].getAttribute("bet"));
@@ -211,24 +217,24 @@ const check = () => {
 	
 	if(outColor=="red")account = account + 2*red;
 	else account += 2*black;
-	
+	 // Verifico si el número ganador está en una fila específica
 	if(outRow==1)account += 3*row1;
 	if(outRow==2)account += 3*row2; 
 	if(outRow==3)account += 3*row3;
-	
+	 // Verifico si el número ganador está en un rango específico
 	if(out>=1&&out<=12)account += 3*select1_12;
 	if(out>=1&&out<=18)account += 2*select1_18;
 	if(out>=13&&out<=24)account += 3*select13_24;
 	if(out>=19&&out<=36)account += 2*select19_36;
 	if(out>=25&&out<=36)account += 3*select25_36;
 	
-	
-	if(account>=tempAccount-currentlyBet)finish.innerText = "WON " + (account - (tempAccount - currentlyBet)) + " ₹";
-	else finish.innerText = "WON 0 ₹";
-	if(currentlyBet<=0)finish.innerText = "Place your bets";
+	// Muestro el resultado final en el elemento finish
+	if(account>=tempAccount-currentlyBet)finish.innerText = "WIN " + (account - (tempAccount - currentlyBet)) + " $";
+	else finish.innerText = "WIN 0 $";
+	if(currentlyBet<=0)finish.innerText = "Apueste sin miedo";
 };
 
-
+// Función que reinicia el juego
 const reinit = () => {
 	for(var j=0; j<boxes.length; j++){
 		while (boxes[j].firstChild) {
@@ -248,38 +254,37 @@ const reinit = () => {
 	betUpDate();	
 	
 };
-
+// Función que cancela el juego
 const cancel = () => {
 	if(!run){
-		account += currentlyBet;
-		accountUpDate();
+		account += currentlyBet;    // Devuelvo el saldo disponible a su valor original
+		accountUpDate();   // Actualizo el saldo disponible
 		reinit();
 	}
 }
-
-//code source canvas roulette
-//https://dzone.com/articles/creating-roulette-wheel-using
-
+// Función constructora de la ruleta
 function Roulette(containerId, options, colors, onSpinEnd){
-	const container = document.getElementById(containerId);
+	const container = document.getElementById(containerId); // Obtengo el contenedor del elemento con el id pasado como parámetro
 	
+	// Creo un elemento canvas y lo agrego al contenedor
 	const canvas = document.createElement("canvas");
 	canvas.width = 500;
 	canvas.height = 500;
 	
 	container.appendChild(canvas);
 
-	var startAngle = 0;
-	var arc = Math.PI / (options.length / 2);
-	var spinTimeout = null;
+	  // Variables para dibujar la ruleta
+	let startAngle = 0;
+	let arc = Math.PI / (options.length / 2);
+	let spinTimeout = null;
 
-	var spinAngleStart = 0;
-	var spinArcStart = 10;
-	var spinTime = 0;
-	var spinTimeTotal = 0;
+	let spinAngleStart = 0;
+	let spinArcStart = 10;
+	let spinTime = 0;
+	let spinTimeTotal = 0;
 
-	var ctx;
-
+	let ctx;
+  // Función para dibujar la ruleta
 	this.drawRouletteWheel = () => {
 		if (canvas.getContext) {
 			var outsideRadius = 200;
@@ -288,22 +293,22 @@ function Roulette(containerId, options, colors, onSpinEnd){
 
 			ctx = canvas.getContext("2d");
 			ctx.clearRect(0, 0, 500, 500);
-
+			 // Establezco el estilo de dibujo
 			ctx.strokeStyle = "black";
 			ctx.lineWidth = 2;
-
+			 // Establezco la fuente de texto
 			ctx.font = 'bold 16px Helvetica, Arial';
-
+			 // Itero sobre las opciones de la ruleta
 			for (var i = 0; i < options.length; i++) {
 				var angle = startAngle + i * arc;
 				ctx.fillStyle = colors[i];
-
+				 // Dibujo la opción
 				ctx.beginPath();
 				ctx.arc(250, 250, outsideRadius, angle, angle + arc, false);
 				ctx.arc(250, 250, insideRadius, angle + arc, angle, true);
 				ctx.stroke();
 				ctx.fill();
-
+				 // Dibujo el texto de cada opción
 				ctx.save();
 				ctx.shadowOffsetX = -1;
 				ctx.shadowOffsetY = -1;
@@ -318,7 +323,7 @@ function Roulette(containerId, options, colors, onSpinEnd){
 				ctx.restore();
 			}
 
-			//Arrow
+			//Dibujo la flecha de la ruleta
 			ctx.fillStyle = "white";
 			ctx.beginPath();
 			ctx.moveTo(250 - 4, 250 - (outsideRadius + 5));
@@ -332,38 +337,39 @@ function Roulette(containerId, options, colors, onSpinEnd){
 			ctx.fill();
 		}
 	}
-
+	// Función que inicia el spin de la ruleta
 	this.spin = () => {
 		run = true;
 		if(spinTimeout){
 			return;
 		}
-		spinAngleStart = Math.random() * 10 + 10;
-		spinTime = 0;
-		spinTimeTotal = Math.random() * 3 + 4 * 1000;
-		this.rotateWheel();
+		spinAngleStart = Math.random() * 10 + 10;  // Establezco el ángulo de inicio del spin
+		spinTime = 0; // Establezco el tiempo de spin
+		spinTimeTotal = Math.random() * 3 + 4 * 1000; // Establezco el tiempo total de spin
+		this.rotateWheel();  // Llamo a la función rotateWheel para iniciar el spin
 	}
-
+	// Función que rota la ruleta
 	this.rotateWheel = () => {
-		spinTime += 30;
+		spinTime += 30;   // Incremento el tiempo de spin
 		if (spinTime >= spinTimeTotal) {
 			this.stopRotateWheel();
 			return;
 		}
-		var spinAngle = spinAngleStart - this.easeOut(spinTime, 0, spinAngleStart, spinTimeTotal);
+		let spinAngle = spinAngleStart - this.easeOut(spinTime, 0, spinAngleStart, spinTimeTotal);
 		startAngle += (spinAngle * Math.PI / 180);
 		this.drawRouletteWheel();
-		//spinTimeout = setTimeout(this.rotateWheel, 30);
+		// Establezco un timeout para llamar a la función rotateWheel nuevamente
+  //spinTimeout = setTimeout(this.rotateWheel, 30);
 		spinTimeout = requestAnimationFrame(this.rotateWheel);
 	}
-
+	// Función que detiene el spin de la ruleta
 	this.stopRotateWheel = () => {
 		cancelAnimationFrame(spinTimeout);
-		//clearTimeout(spinTimeout);
+		//// Cancelo el timeout actual
 		spinTimeout = null;
-		var degrees = startAngle * 180 / Math.PI + 90;
-		var arcd = arc * 180 / Math.PI;
-		var index = Math.floor((360 - degrees % 360) / arcd);
+		let degrees = startAngle * 180 / Math.PI + 90;
+		let arcd = arc * 180 / Math.PI;
+		let index = Math.floor((360 - degrees % 360) / arcd);
 		ctx.save();
 		ctx.beginPath();
 		ctx.fillStyle = colors[index];
@@ -373,18 +379,18 @@ function Roulette(containerId, options, colors, onSpinEnd){
 		ctx.closePath();
 		ctx.fillStyle = "white";
 		ctx.font = 'bold 35px Helvetica, Arial';
-		var text = options[index]
+		let text = options[index]
 		onSpinEnd && onSpinEnd(text);
 		ctx.fillText(text, 250 - ctx.measureText(text).width / 2, 250 + 10);
 		ctx.restore();
 	}
-
+	// Función de easing out para calcular el ángulo de rotación
 	this.easeOut = (t, b, c, d) => {
-		var ts = (t /= d) * t;
-		var tc = ts * t;
+		let ts = (t /= d) * t;
+		let tc = ts * t;
 		return b + c * (tc + -3 * ts + 3 * t);
 	}
-
+	// Dibujo la ruleta inicialmente
 	this.drawRouletteWheel();
 }
-window.onload = init;
+window.onload = init; // Inicializo la ruleta cuando se carga la página
